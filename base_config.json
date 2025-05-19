@@ -1,0 +1,30 @@
+{
+  "base_configs": {
+    "vocab_size": 50257,
+    "context_length": 1024,
+    "drop_rate": 0.1,
+    "qkv_bias": true
+  },
+  "model_configs": {
+    "gpt2": {
+      "emb_dim": 768,
+      "n_layers": 12,
+      "n_heads": 12
+    },
+    "gpt2-medium": {
+      "emb_dim": 1024,
+      "n_layers": 24,
+      "n_heads": 16
+    },
+    "gpt2-large": {
+      "emb_dim": 1280,
+      "n_layers": 36,
+      "n_heads": 20
+    },
+    "gpt2-xl": {
+      "emb_dim": 1600,
+      "n_layers": 48,
+      "n_heads": 25
+    }
+  }
+}
