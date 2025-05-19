@@ -5,8 +5,9 @@ import pathlib
 import tiktoken
 from data_preprocessing import create_data_loader, format_input
 from gpt.build_llm.gpt2 import GPTModel
-from gpt.model_weights.load_model_weights import load_weights,load_foundational_model
 from gpt.build_llm.utils import train_model
+from gpt.Inference.generate_logic import generate_and_print_sample
+from gpt.model_weights.load_model_weights import load_weights,load_foundational_model
 
 model_type = "gpt2-medium"
 tokenizer = tiktoken.get_encoding("gpt2")
@@ -42,24 +43,32 @@ loading the pretrained model weights
 state_dict = load_foundational_model(model_type)
 model = load_weights(GPT_CONFIG["n_layers"], model, state_dict)
 
+# """
+# Fine tuning then model on instruction dataset
+# """
+#
+# start_time = time.time()
+#
+# optimizer = torch.optim.AdamW(model.parameters(), lr=0.00005, weight_decay=0.1)
+# num_epochs = 5
+# model.to(device)
+# train_losses, val_losses, tokens_seen = train_model(
+#     model, train_loader, val_loader, optimizer, device,
+#     num_epochs=num_epochs, eval_freq=5, eval_iter=5,
+#     start_context=format_input(val_data[0]), tokenizer=tokenizer
+# )
+#
+# end_time = time.time()
+# execution_time_minutes = (end_time - start_time) / 60
+# print(f"Training completed in {execution_time_minutes:.2f} minutes.")
+
 """
-Fine tuning then model on instruction dataset
+Testing the model by predicting on test data
 """
+entry = test_data[0]
+input_text = format_input(entry)
+generate_and_print_sample(model, tokenizer, device, input_text,max_new_tokens=256,temperature=0.0,top_k=None,eos_id=50256)
 
-start_time = time.time()
-
-optimizer = torch.optim.AdamW(model.parameters(), lr=0.00005, weight_decay=0.1)
-num_epochs = 5
-model.to(device)
-train_losses, val_losses, tokens_seen = train_model(
-    model, train_loader, val_loader, optimizer, device,
-    num_epochs=num_epochs, eval_freq=5, eval_iter=5,
-    start_context=format_input(val_data[0]), tokenizer=tokenizer
-)
-
-end_time = time.time()
-execution_time_minutes = (end_time - start_time) / 60
-print(f"Training completed in {execution_time_minutes:.2f} minutes.")
 
 
 
